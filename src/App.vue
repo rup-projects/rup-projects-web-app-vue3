@@ -1,14 +1,10 @@
 <script setup>
+import AppNavigation from "./components/AppNavigation.vue";
 </script>
 
 <template>
-  <header>
-    rup project
-
-  </header>
-
-  <main>
-  </main>
+  <AppNavigation />
+  <RouterView />
 </template>
 
 <style scoped>
