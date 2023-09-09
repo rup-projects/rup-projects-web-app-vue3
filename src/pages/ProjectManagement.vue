@@ -1,10 +1,19 @@
 <template>
 
-  <div v-if="phases.length > 0">
-    <div v-for="phase in phases">
-      {{phase.type}} from: {{phase.startDate}} to: {{phase.endDate}} {{phase.duration}}
-    </div>
-  </div>
+  <table v-if="phases.length > 0">
+    <tr>
+      <th>Phase</th>
+      <th>Start date</th>
+      <th>End date</th>
+      <th>Duration</th>
+    </tr>
+    <tr v-for="phase in phases">
+      <td>{{phase.type}}</td>
+      <td>{{phase.startDate}}</td>
+      <td>{{phase.endDate}}</td>
+      <td>{{phase.duration}}</td>
+    </tr>
+  </table>
 
   <button @click="closeProject()">Close project</button>
 
@@ -13,17 +22,20 @@
 
 <script setup lang="ts">
 
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {Phase} from "../models/phase";
 import {api} from "../services/api";
 import {routerPush} from "../router";
 
 const phases = ref<Phase[]>([]);
 
-api.get(`phases/`).then((response) => {
-  phases.value = response.data
-})
+onMounted(() => {
+  api.get(`phases/`).then((response) => {
+    phases.value = response.data
+  })
 
+    }
+);
 
 const closeProject = async () => {
   try {

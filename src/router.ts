@@ -29,12 +29,12 @@ export const routes: RouteRecordRaw[] = [
     },
     {
         name: 'usecase',
-        path: '/usecase/:slug',
+        path: '/usecases',
         component: () => import('./pages/UseCase.vue'),
     },
     {
         name: 'member',
-        path: '/member/:slug',
+        path: '/members',
         component: () => import('./pages/Member.vue'),
     },
 ]

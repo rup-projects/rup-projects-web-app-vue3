@@ -1,12 +1,29 @@
 <template>
 
-
-
   <div v-if="project">
-    <p>startDate: {{project.startDate}}</p>
-    <p>endDate: {{project.endDate}}</p>
-    <p>cost: {{ project.cost }}</p>
-    <p>cost: {{ project.iterationSize }}</p>
+
+    <p>Iteration duration: {{project.iterationSize}} days</p>
+
+    <div v-if="project.phases.length > 0">
+      <table>
+        <tr>
+          <th>Phase</th>
+          <th>Start date</th>
+          <th>End date</th>
+          <th>Duration</th>
+        </tr>
+        <tr v-for="phase in project.phases">
+          <td>{{phase.type}}</td>
+          <td>{{phase.startDate}}</td>
+          <td>{{phase.endDate}}</td>
+          <td>{{phase.duration}}</td>
+        </tr>
+      </table>
+      <button @click="previousStep()">Back</button>
+      <button @click="confirmProject()">Create</button>
+    </div>
+
+
   </div>
   <div v-else>
     <form @submit.prevent="onSubmit">
@@ -46,7 +63,9 @@
 
 import {reactive, ref} from "vue";
 import {api} from "../services/api";
-import {Project} from "src/models/project.ts";
+import {Project} from "../models/project";
+import {routerPush} from "../router";
+import {useUserStore} from "src/store/user.ts";
 
 interface FormState {
   startDate: string
@@ -54,10 +73,19 @@ interface FormState {
   cost: number
 }
 
+const userStore = useUserStore()
+
+function formatDateToYYYY_MM_DD(date: Date): string {
+  return date.toISOString().split('T')[0];
+}
+
+
 const project = ref<Project>();
+let now = new Date();
+
 const form: FormState = reactive({
-  startDate: "2023-09-10",
-  endDate: "2024-01-07",
+  startDate: formatDateToYYYY_MM_DD(now),
+  endDate: formatDateToYYYY_MM_DD(new Date(now.setMonth(now.getMonth() + 5))),
   cost: 1000
 })
 
@@ -70,5 +98,34 @@ const onSubmit = () => {
     project.value = response.data
   })
 }
+
+function formatFromDateToISOString(date: Date) {
+  return new Date(date).toISOString();
+}
+
+const previousStep = async () => {
+  form.startDate = formatFromDateToISOString(project.value?.startDate)
+  form.endDate = formatFromDateToISOString(project.value?.endDate)
+  form.cost = project.value?.cost
+  project.value = null
+}
+
+const confirmProject = () => {
+  try {
+    api.post(`projects`, {
+      startDate: formatFromDateToISOString(project.value?.startDate),
+      endDate: formatFromDateToISOString(project.value?.endDate),
+      cost: project.value?.cost,
+      numberOfIterations: project.value?.numberOfIterations
+    }).then( () => {
+      userStore.updateUser({isAuthorized : true})
+      routerPush('project-management')
+    }
+    )
+  } catch (e) {
+    console.error(e)
+  }
+}
+
 
 </script>

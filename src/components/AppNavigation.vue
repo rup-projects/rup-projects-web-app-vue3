@@ -1,8 +1,24 @@
 <template>
-  <nav class="navbar navbar-light">
-    <div class="container">
+  <nav>
+    <div>
+      <ul>
+        <li v-for="link in navLinks" :key="link.name">
+          <AppLink
+              class="nav-link"
+              active-class="active"
+              :name="link.name" :params="link.params" :aria-label="link.title">
+            <i
+                v-if="link.icon"
+                :class="link.icon"
+            />
+            {{ link.title }}
+          </AppLink>
+        </li>
 
-    HEADER
+      </ul>
+
+
+
 
 
     </div>
@@ -13,6 +29,8 @@
 import { computed } from 'vue'
 import type { RouteParams } from 'vue-router'
 import {AppRouteNames} from '../router';
+import {storeToRefs} from "pinia";
+import {useUserStore} from "src/store/user.ts";
 
 interface NavLink {
   name: AppRouteNames
@@ -22,18 +40,30 @@ interface NavLink {
   display: 'all' | 'anonym' | 'authorized'
 }
 
-
+const { isAuthorized } = storeToRefs(useUserStore())
 
 const allNavLinks = computed<NavLink[]>(() => [
   {
-    name: 'global-feed',
-    title: 'Home',
-    display: 'all',
+    name: "project-management",
+    title: 'Project',
+    display: 'authorized',
   },
+  {
+    name: "member",
+    title: 'Members',
+    display: 'authorized',
+  },
+  {
+    name: "usecase",
+    title: 'User cases',
+    display: 'authorized',
+  }
   ])
 
-const navLinks = computed(() => allNavLinks.value.filter(
-  l => l.display === 'all',
-))
+const navLinks = computed(() => {
+  return allNavLinks.value.filter(
+      link => link.display === (isAuthorized.value ? 'authorized' : 'anonym')
+  );
+})
 
 </script>

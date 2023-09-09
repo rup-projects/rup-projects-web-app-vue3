@@ -22,8 +22,10 @@ import {computed, ref} from "vue";
 import {api} from "../services/api";
 import {Project} from "../models/project.ts";
 import {routerPush} from "src/router.ts";
+import {useUserStore} from "src/store/user.ts";
 
 const projects = ref<Project[]>([]);
+const userStore = useUserStore()
 
 api.get(`projects/`).then((response) => {
   projects.value = response.data
@@ -35,6 +37,7 @@ const firstProject = computed(() => {
 
 const toProjectManagementRoute = async () => {
   try {
+    userStore.updateUser({isAuthorized : true})
     await routerPush('project-management')
   } catch (e) {
     console.error(e)
@@ -51,7 +54,10 @@ const toPlanProjectRoute = async () => {
 }
 
 const deleteProject = () => {
-
+  api.delete(`projects`).then()
+  projects.value = [];
+  //todo que sea un evento
+  userStore.updateUser(null)
 }
 
 

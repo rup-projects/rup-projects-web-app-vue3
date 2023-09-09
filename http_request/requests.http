@@ -10,17 +10,38 @@ Content-Type: application/json
   "cost": 100
 }
 
+### confirm planning project
+POST http://localhost:8080/projects
+Content-Type: application/json
+
+{
+  "startDate": "2023-09-10T15:39:11.233Z",
+  "endDate": "2024-01-07T16:39:11.233Z",
+  "cost": 100,
+  "numberOfIterations": 10
+}
+
+
 ###
 POST http://localhost:8080/projects/planned
 Content-Type: application/json
 
-{"startDate":"2023-01-01","endDate":"2023-01-03","cost":100}
+{
+  "startDate": "2023-01-01",
+  "endDate": "2023-01-03",
+  "cost": 100
+}
 
 ### create new project
 POST http://localhost:8080/projects
 Content-Type: application/json
 
-{"startDate":"2023-09-10T08:41:24.812Z","endDate":"2024-01-07T09:41:24.812Z","cost":100,"numberOfIterations":10}
+{
+  "startDate": "2023-09-10T08:41:24.812Z",
+  "endDate": "2024-01-07T09:41:24.812Z",
+  "cost": 100,
+  "numberOfIterations": 10
+}
 
 ### get project phases
 GET http://localhost:8080/phases
