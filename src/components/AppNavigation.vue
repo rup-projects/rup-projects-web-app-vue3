@@ -1,8 +1,8 @@
 <template>
   <nav>
     <div>
-      <ul>
-        <li v-for="link in navLinks" :key="link.name">
+      <ul class="nav-links">
+        <li v-for="link in navLinks" :key="link.name" style="">
           <AppLink
               class="nav-link"
               active-class="active"
@@ -11,16 +11,11 @@
                 v-if="link.icon"
                 :class="link.icon"
             />
-            {{ link.title }}
+            <Button link>{{ link.title }}</Button>
+
           </AppLink>
         </li>
-
       </ul>
-
-
-
-
-
     </div>
   </nav>
 </template>
@@ -67,3 +62,15 @@ const navLinks = computed(() => {
 })
 
 </script>
+
+<style scoped>
+
+.nav-links {
+  list-style-type: none;
+}
+
+.nav-links li {
+  display:inline;
+}
+
+</style>

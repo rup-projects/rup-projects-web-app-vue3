@@ -1,21 +1,17 @@
 <template>
 
-  <table v-if="phases.length > 0">
-    <tr>
-      <th>Phase</th>
-      <th>Start date</th>
-      <th>End date</th>
-      <th>Duration</th>
-    </tr>
-    <tr v-for="phase in phases">
-      <td>{{phase.type}}</td>
-      <td>{{phase.startDate}}</td>
-      <td>{{phase.endDate}}</td>
-      <td>{{phase.duration}}</td>
-    </tr>
-  </table>
+  <div v-if="phases.length > 0">
+    <DataTable :value="phases"
+               v-model:selection="selectedPhase" selectionMode="single" data-key="id" @rowSelect="onRowSelect">
+      <Column field="type" header="Type"></Column>
+      <Column field="startDate" header="Start date"></Column>
+      <Column field="endDate" header="End date"></Column>
+      <template #footer><Button severity="secondary" text raised @click="closeProject()">Close project</Button></template>
+    </DataTable>
+  </div >
 
-  <button @click="closeProject()">Close project</button>
+
+
 
 
 </template>
@@ -24,13 +20,14 @@
 
 import {onMounted, ref} from "vue";
 import {Phase} from "../models/phase";
-import {api} from "../services/api";
 import {routerPush} from "../router";
+import {getPhases} from "src/services/ApiServices.ts";
 
 const phases = ref<Phase[]>([]);
+const selectedPhase = ref();
 
 onMounted(() => {
-  api.get(`phases/`).then((response) => {
+  getPhases().then((response) => {
     phases.value = response.data
   })
 
@@ -44,5 +41,9 @@ const closeProject = async () => {
     console.error(e)
   }
 }
+
+const onRowSelect = (event) => {
+  routerPush('phase', { slug: event.data.id })
+};
 
 </script>

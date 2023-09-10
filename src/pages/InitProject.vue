@@ -2,25 +2,32 @@
 
   <div v-if="project">
 
-    <p>Iteration duration: {{project.iterationSize}} days</p>
-
     <div v-if="project.phases.length > 0">
-      <table>
-        <tr>
-          <th>Phase</th>
-          <th>Start date</th>
-          <th>End date</th>
-          <th>Duration</th>
-        </tr>
-        <tr v-for="phase in project.phases">
-          <td>{{phase.type}}</td>
-          <td>{{phase.startDate}}</td>
-          <td>{{phase.endDate}}</td>
-          <td>{{phase.duration}}</td>
-        </tr>
-      </table>
-      <button @click="previousStep()">Back</button>
-      <button @click="confirmProject()">Create</button>
+      <DataTable :value="project.phases">
+        <template #header class="preview-phases-header">
+          <Tag severity="info" icon="pi pi-calendar">{{ project.startDate }} to {{ project.endDate }}</Tag>
+
+          <Tag severity="info" icon="pi pi-clock">Iteration duration:
+            {{ project.iterationSize }} days
+          </Tag>
+
+          <Tag severity="info" icon="pi pi-dollar">{{ project.cost }}</Tag>
+
+          <InputNumber v-model="form.numberOfIterations"
+                       prefix="Project with " suffix=" iterations" :step="10" showButtons></InputNumber>
+
+          <Button @click="refreshProject()" text raised>refresh</Button>
+        </template>
+
+        <Column field="type" header="Type"></Column>
+        <Column field="startDate" header="Start date"></Column>
+        <Column field="endDate" header="End date"></Column>
+        <template #footer>
+          <Button severity="secondary" text @click="previousStep()">Back</Button>
+          <Button text raised @click="confirmProject()">Create</Button>
+        </template>
+      </DataTable>
+
     </div>
 
 
@@ -29,32 +36,30 @@
     <form @submit.prevent="onSubmit">
 
       <fieldset class="form-group">
+
         <label for="startDate">Start date:</label>
-        <input v-model="form.startDate"
-               type="date" id="startDate" name="start"   />
+        <Calendar v-model="form.startDate" dateFormat="yy-mm-dd" :manualInput="false" showIcon/>
 
         <label for="endDate">End date:</label>
-        <input v-model="form.endDate"
-               type="date" id="endDate" name="start" />
+        <Calendar v-model="form.endDate" dateFormat="yy-mm-dd" :manualInput="false" showIcon/>
+
       </fieldset>
 
       <fieldset class="form-group">
         <label for="cost">Cost:</label>
-        <input v-model="form.cost" type="number" id="cost" name="cost" />
+        <InputNumber v-model="form.cost" inputId="cost" :min="0"/>
       </fieldset>
 
-      <button
-          class="btn btn-lg pull-xs-right btn-primary"
-          type="submit"
-          :disabled="!(form.startDate && form.endDate && form.cost)">
+      <Button severity="secondary" text @click="backToHome()">Back</Button>
+      <Button text
+              class="btn btn-lg pull-xs-right btn-primary"
+              type="submit"
+              :disabled="!(form.startDate && form.endDate && form.cost)">
         Next
-      </button>
+      </Button>
 
     </form>
   </div>
-
-
-
 
 
 </template>
@@ -62,65 +67,82 @@
 <script setup lang="ts">
 
 import {reactive, ref} from "vue";
-import {api} from "../services/api";
 import {Project} from "../models/project";
 import {routerPush} from "../router";
 import {useUserStore} from "src/store/user.ts";
+import {createProject, preCreateProject} from "src/services/ApiServices.ts";
+import {DateTime} from "luxon";
 
 interface FormState {
   startDate: string
   endDate: string
   cost: number
+  numberOfIterations?: number
 }
 
 const userStore = useUserStore()
 
-function formatDateToYYYY_MM_DD(date: Date): string {
-  return date.toISOString().split('T')[0];
-}
-
 
 const project = ref<Project>();
-let now = new Date();
-
 const form: FormState = reactive({
-  startDate: formatDateToYYYY_MM_DD(now),
-  endDate: formatDateToYYYY_MM_DD(new Date(now.setMonth(now.getMonth() + 5))),
+  startDate: DateTime.now().toFormat('yyyy-MM-dd'),
+  endDate: DateTime.now().plus({month: 5}).toFormat('yyyy-MM-dd'),
   cost: 1000
 })
-
-const onSubmit = () => {
-  api.post(`projects/planned`, {
-    startDate: new Date(Date.parse(form.startDate)).toISOString(),
-    endDate: new Date(Date.parse(form.endDate)).toISOString(),
-    cost: 100
-  }).then(response => {
-    project.value = response.data
-  })
-}
 
 function formatFromDateToISOString(date: Date) {
   return new Date(date).toISOString();
 }
 
 const previousStep = async () => {
-  form.startDate = formatFromDateToISOString(project.value?.startDate)
-  form.endDate = formatFromDateToISOString(project.value?.endDate)
+  form.startDate = DateTime.fromJSDate(project.value?.startDate).toFormat('yyyy-MM-dd')
+  form.endDate = DateTime.fromJSDate(project.value?.endDate).toFormat('yyyy-MM-dd')
   form.cost = project.value?.cost
   project.value = null
 }
 
+const backToHome = () => {
+  routerPush('home')
+}
+
+const onSubmit = () => {
+  preCreateProject({
+    startDate: DateTime.fromISO(form.startDate).toBSON(),
+    endDate: DateTime.fromISO(form.endDate).toBSON(),
+    cost: 100
+  }).then(response => {
+    project.value = response.data
+    form.numberOfIterations = response.data.numberOfIterations
+  })
+}
+
+const refreshProject = () => {
+  try {
+    preCreateProject({
+      startDate: DateTime.fromISO(form.startDate).toBSON(),
+      endDate: DateTime.fromISO(form.endDate).toBSON(),
+      cost: 100,
+      numberOfIterations: form.numberOfIterations
+    }).then(response => {
+      project.value = response.data
+    })
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+
 const confirmProject = () => {
   try {
-    api.post(`projects`, {
+    createProject({
       startDate: formatFromDateToISOString(project.value?.startDate),
       endDate: formatFromDateToISOString(project.value?.endDate),
-      cost: project.value?.cost,
-      numberOfIterations: project.value?.numberOfIterations
-    }).then( () => {
-      userStore.updateUser({isAuthorized : true})
-      routerPush('project-management')
-    }
+      cost: project.value?.cost!,
+      numberOfIterations: project.value?.numberOfIterations!
+    }).then(() => {
+          userStore.updateUser({isAuthorized: true})
+          routerPush('project-management')
+        }
     )
   } catch (e) {
     console.error(e)
@@ -129,3 +151,20 @@ const confirmProject = () => {
 
 
 </script>
+
+
+<style scoped>
+
+.form-group label {
+  margin: 0.5em
+}
+
+fieldset {
+  border: 0;
+}
+
+.p-datatable-header > * {
+  margin-left: 0.5em
+}
+
+</style>

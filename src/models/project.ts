@@ -13,3 +13,5 @@ export interface Project {
 }
 
 export type CreateProjectDto = Pick<Project, 'startDate' | 'endDate' | 'cost' | 'numberOfIterations'>;
+
+export type PreCreateProjectDto = Pick<Project, 'startDate' | 'endDate' | 'cost'>;

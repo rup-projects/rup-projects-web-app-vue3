@@ -6,6 +6,8 @@ import InitProject from "./pages/InitProject.vue";
 
 export type AppRouteNames =
     | 'project-management'
+    | 'phase'
+    | 'iteration'
     | 'init-project'
     | 'home'
     | 'usecase'
@@ -26,6 +28,16 @@ export const routes: RouteRecordRaw[] = [
         name: 'project-management',
         path: '/project-management',
         component: ProjectManagement,
+    },
+    {
+        name: 'phase',
+        path: '/phase/:slug',
+        component: () => import('./pages/PhaseManagement.vue'),
+    },
+    {
+        name: 'iteration',
+        path: '/iteration/:slug',
+        component: () => import('./pages/IterationManagement.vue'),
     },
     {
         name: 'usecase',

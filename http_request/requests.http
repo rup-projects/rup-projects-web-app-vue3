@@ -10,6 +10,18 @@ Content-Type: application/json
   "cost": 100
 }
 
+### refresh project
+http://localhost:8080/projects/planned
+Content-Type: application/json
+
+{
+  "startDate": "2023-09-11T11:23:55.205Z",
+  "endDate": "2024-01-08T12:23:55.205Z",
+  "cost": 100,
+  "numberOfIterations": 20
+}
+
+
 ### confirm planning project
 POST http://localhost:8080/projects
 Content-Type: application/json
@@ -20,6 +32,12 @@ Content-Type: application/json
   "cost": 100,
   "numberOfIterations": 10
 }
+
+### GET phase iterations
+GET http://localhost:8080/phases/102/iterations
+
+### Get iteration
+GET http://localhost:8080/iterations/253
 
 
 ###
@@ -45,3 +63,9 @@ Content-Type: application/json
 
 ### get project phases
 GET http://localhost:8080/phases
+
+### get members
+GET http://localhost:8080/members
+
+
+
