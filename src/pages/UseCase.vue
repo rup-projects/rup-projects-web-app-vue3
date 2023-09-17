@@ -1,8 +1,7 @@
 <template>
 
   <div >
-    <DataTable :value="usecases"
-               data-key="id">
+    <DataTable :value="usecases" data-key="id" selectionMode="single" @rowSelect="onRowSelect">
       <template #empty>
         No use cases found
       </template>
@@ -33,11 +32,16 @@ onMounted(() => {
 
 const createUseCase = async () => {
   try {
-    await routerPush('home')
+    await routerPush('create-usecase')
   } catch (e) {
     console.error(e)
   }
 }
+
+const onRowSelect = (event) => {
+  routerPush('edit-usecase', {slug: event.data.id});
+};
+
 
 
 </script>

@@ -7,7 +7,10 @@ import Column from "primevue/column";
 import Card from 'primevue/card';
 import Tag from 'primevue/tag';
 import InputNumber from 'primevue/inputnumber';
+import InputText from 'primevue/inputtext';
 import Calendar from 'primevue/calendar';
+import Dropdown from 'primevue/dropdown';
+
 
 
 export default function registerGlobalComponents (app: App): void {
@@ -19,6 +22,8 @@ export default function registerGlobalComponents (app: App): void {
   app.component('Card', Card);
   app.component('Tag', Tag);
   app.component('InputNumber', InputNumber);
+  app.component('InputText', InputText);
   app.component('Calendar', Calendar);
+  app.component('Dropdown', Dropdown);
 
 }

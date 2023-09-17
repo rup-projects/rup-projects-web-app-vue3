@@ -1,7 +1,7 @@
 <template>
 
     <DataTable :value="members"
-               data-key="id">
+               data-key="id" selectionMode="single" @rowSelect="onRowSelect">
       <template #empty>
         No members found
       </template>
@@ -12,32 +12,27 @@
       <template #footer><Button severity="secondary" text raised @click="createMember()">Create member</Button></template>
     </DataTable>
 
-
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
-import {Member} from "src/models/member.ts";
-import {getMembers} from "src/services/ApiServices.ts";
+import {useMembers} from "src/components/useMembers.js";
+
 import {routerPush} from "src/router.ts";
 
-const members = ref<Member[]>([]);
-
-onMounted(() => {
-  getMembers().then((response) => {
-        members.value = response.data
-      })
-
-    }
-)
+const { members } = useMembers();
 
 const createMember = async () => {
   try {
-    await routerPush('home')
+    await routerPush('create-member')
   } catch (e) {
     console.error(e)
   }
 }
+
+const onRowSelect = (event) => {
+  routerPush('edit-member', {slug: event.data.id});
+};
+
 
 
 </script>

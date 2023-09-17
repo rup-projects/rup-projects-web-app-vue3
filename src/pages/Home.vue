@@ -52,7 +52,7 @@
 
 import {routerPush} from "src/router.ts";
 import {useUserStore} from "src/store/user.ts";
-import {useProject} from "src/pages/useProject.ts";
+import {useProject} from "src/components/useProject.js";
 import Modal from "src/components/Modal.vue";
 import {ref} from "vue";
 
@@ -98,7 +98,7 @@ const closeConfirmationModal = () => {
 <style scoped>
 
 .modal-buttons {
-  flex-direction : row;
+  flex-direction: row;
 }
 
 .modal-buttons button {

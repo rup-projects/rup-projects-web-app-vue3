@@ -16,7 +16,7 @@
 
 import {ref} from "vue";
 import {routerPush} from "../router";
-import {usePhases} from "src/pages/usePhases.ts";
+import {usePhases} from "src/components/usePhases.js";
 
 const { phases } = usePhases();
 const selectedPhase = ref();

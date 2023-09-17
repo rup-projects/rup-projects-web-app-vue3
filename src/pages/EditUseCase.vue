@@ -2,7 +2,28 @@
 
   <form @submit.prevent="onSubmit">
 
+    <fieldset>
+      <label for="name">Name</label>
+      <InputText v-model="form.name" inputId="name"/>
+    </fieldset>
 
+    <fieldset>
+      <label for="description">Surname</label>
+      <InputText v-model="form.description" inputId="description"/>
+    </fieldset>
+
+    <fieldset>
+      <label for="priority">Surname</label>
+      <InputNumber v-model="form.priority" :min="0" inputId="priority"/>
+    </fieldset>
+
+    <Button severity="secondary" text @click="cancel()">Back</Button>
+    <Button text
+            class="btn btn-lg pull-xs-right btn-primary"
+            type="submit"
+            :disabled="!(form.name)">
+      Confirm
+    </Button>
 
   </form>
 
@@ -10,11 +31,11 @@
 
 <script setup lang="ts">
 
-import {computed, onMounted, reactive, ref} from "vue";
+import {computed, onMounted, reactive} from "vue";
 import {getUserCase, createUseCase, updateUseCase} from "src/services/ApiServices.ts";
 import {routerPush} from "src/router.ts";
-import {useRoute, useRouter} from "vue-router";
-import UseCase from "src/pages/UseCase.vue";
+import {useRoute} from "vue-router";
+import {UseCase} from "src/models/use-case.ts";
 
 interface FormState {
   name: string;
@@ -49,11 +70,14 @@ const onSubmit = async () => {
   if (slug.value) {
     await updateUseCase(form).then()
   } else {
-    await createUseCase(form).then(res => res.data.article)
+    await createUseCase(form).then(res => res.data.usecase)
   }
   await routerPush('usecase')
 }
 
+const cancel = async () => {
+  await routerPush('usecase')
+}
 
 </script>
 

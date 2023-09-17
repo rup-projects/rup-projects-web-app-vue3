@@ -14,7 +14,7 @@ export async function getUserCase(id: string): Promise<UseCase[]> {
 }
 
 export async function createUseCase(useCase: UseCase): Promise<UseCase> {
-    return api.post(`useCase`, useCase);
+    return api.post(`use-cases`, useCase);
 }
 
 export async function updateUseCase(useCase: UseCase): Promise<void> {
@@ -25,6 +25,20 @@ export async function updateUseCase(useCase: UseCase): Promise<void> {
 export async function getMembers(): Promise<Member[]> {
     return api.get(`members/`)
 }
+
+export async function getMember(id: string): Promise<UseCase[]> {
+    return api.get(`members/${id}`)
+}
+
+export async function updateMember(member: Member): Promise<void> {
+    return api.put(`members${member.id}`, member);
+}
+
+export async function createMember(member: Member): Promise<Member> {
+    return api.post(`members`, member);
+}
+
+
 
 export async function getPhases(): Promise<Phase[]> {
     return api.get(`phases/`)
