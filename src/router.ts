@@ -45,6 +45,11 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('./pages/UseCase.vue'),
     },
     {
+        name: 'edit-usecase',
+        path: '/usecases/:slug/edit',
+        component: () => import('./pages/UseCase.vue'),
+    },
+    {
         name: 'member',
         path: '/members',
         component: () => import('./pages/Member.vue'),

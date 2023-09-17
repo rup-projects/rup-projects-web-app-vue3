@@ -9,6 +9,19 @@ export async function getUserCases(): Promise<UseCase[]> {
     return api.get(`use-cases/`)
 }
 
+export async function getUserCase(id: string): Promise<UseCase[]> {
+    return api.get(`use-cases/${id}`)
+}
+
+export async function createUseCase(useCase: UseCase): Promise<UseCase> {
+    return api.post(`useCase`, useCase);
+}
+
+export async function updateUseCase(useCase: UseCase): Promise<void> {
+    return api.put(`use-cases/${useCase.id}`, useCase);
+}
+
+
 export async function getMembers(): Promise<Member[]> {
     return api.get(`members/`)
 }
@@ -21,7 +34,7 @@ export async function getProject(): Promise<Project> {
     return api.get(`projects/`)
 }
 
-export async function deletePr(): Promise<void> {
+export async function deleteProject(): Promise<void> {
     return api.delete(`projects`)
 }
 

@@ -27,7 +27,7 @@
     </template>
 
     <template #footer>
-      <Button text raised severity="danger" @click="deleteProject()">Delete</Button>
+      <Button text raised severity="danger" @click="openConfirmationModal()">Delete</Button>
       <Button text raised @click="toProjectManagementRoute()"
               style="margin-left: 0.5em">Open
       </Button>
@@ -37,30 +37,29 @@
     <Button text raised label="Plan project" @click="toPlanProjectRoute()"></Button>
   </div>
 
+  <Modal v-if="isConfirmModalOpen" @close="closeConfirmationModal()">
+    <div>Are you sure?</div>
+
+    <div class="modal-buttons">
+      <Button text raised @click="closeConfirmationModal()">Cancel</Button>
+      <Button text raised severity="danger" @click="deleteFirstProject()">Confirm</Button>
+    </div>
+  </Modal>
 
 </template>
 
 <script setup lang="ts">
 
-import {computed, ref} from "vue";
-import {Project} from "../models/project.ts";
 import {routerPush} from "src/router.ts";
 import {useUserStore} from "src/store/user.ts";
-import {getProject} from "src/services/ApiServices.ts";
-import {deletePr} from "src/services/ApiServices";
+import {useProject} from "src/pages/useProject.ts";
+import Modal from "src/components/Modal.vue";
+import {ref} from "vue";
 
 
-const projects = ref<Project[]>([]);
+const {projects, firstProject, deleteProject} = useProject()
 const userStore = useUserStore()
-
-getProject().then((response) => {
-  projects.value = response.data
-})
-
-const firstProject = computed(() => {
-  return projects.value[0]
-})
-
+const isConfirmModalOpen = ref(false)
 const toProjectManagementRoute = async () => {
   try {
     userStore.updateUser({isAuthorized: true})
@@ -79,12 +78,33 @@ const toPlanProjectRoute = async () => {
 
 }
 
-const deleteProject = () => {
-  deletePr().then()
-  projects.value = [];
+const deleteFirstProject = () => {
+  deleteProject()
   //todo que sea un evento
+  isConfirmModalOpen.value = false
   userStore.updateUser(null)
 }
 
+const openConfirmationModal = () => {
+  isConfirmModalOpen.value = true
+}
+
+const closeConfirmationModal = () => {
+  isConfirmModalOpen.value = false
+}
 
 </script>
+
+<style scoped>
+
+.modal-buttons {
+  flex-direction : row;
+}
+
+.modal-buttons button {
+  margin: 0.2em;
+}
+
+
+</style>
+

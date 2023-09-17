@@ -10,29 +10,17 @@
     </DataTable>
   </div >
 
-
-
-
-
 </template>
 
 <script setup lang="ts">
 
-import {onMounted, ref} from "vue";
-import {Phase} from "../models/phase";
+import {ref} from "vue";
 import {routerPush} from "../router";
-import {getPhases} from "src/services/ApiServices.ts";
+import {usePhases} from "src/pages/usePhases.ts";
 
-const phases = ref<Phase[]>([]);
+const { phases } = usePhases();
 const selectedPhase = ref();
 
-onMounted(() => {
-  getPhases().then((response) => {
-    phases.value = response.data
-  })
-
-    }
-);
 
 const closeProject = async () => {
   try {

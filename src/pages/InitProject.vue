@@ -81,8 +81,6 @@ interface FormState {
 }
 
 const userStore = useUserStore()
-
-
 const project = ref<Project>();
 const form: FormState = reactive({
   startDate: DateTime.now().toFormat('yyyy-MM-dd'),
