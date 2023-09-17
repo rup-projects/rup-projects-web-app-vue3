@@ -82,11 +82,10 @@ onMounted(() => {
 )
 
 const onSubmit = async () => {
-  let member: Member
   if (slug.value) {
-    await updateMember(form).then()
+    await updateMember({id: Number(slug.value), ...form}).then()
   } else {
-    await createMember(form).then(res => res.data.member)
+    await createMember(form).then()
   }
   await routerPush('member')
 }

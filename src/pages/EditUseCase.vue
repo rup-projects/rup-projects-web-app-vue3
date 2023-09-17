@@ -66,11 +66,10 @@ onMounted(() => {
 )
 
 const onSubmit = async () => {
-  let useCase: UseCase
   if (slug.value) {
-    await updateUseCase(form).then()
+    await updateUseCase({id: Number(slug.value), ...form}).then()
   } else {
-    await createUseCase(form).then(res => res.data.usecase)
+    await createUseCase(form).then()
   }
   await routerPush('usecase')
 }
@@ -82,5 +81,15 @@ const cancel = async () => {
 </script>
 
 <style scoped>
+.form-group label {
+  margin: 0.5em
+}
 
+fieldset {
+  border: 0;
+}
+
+fieldset * {
+  margin-right: 1rem;
+}
 </style>

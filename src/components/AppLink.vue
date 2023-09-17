@@ -1,8 +1,7 @@
 <template>
   <RouterLink
     :aria-label="props.name"
-    :to="props"
-  >
+    :to="props">
     <slot />
   </RouterLink>
 </template>

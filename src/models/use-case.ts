@@ -7,6 +7,6 @@ export interface UseCase {
   priority: number;
 }
 
-export type createUseCaseDto = Omit<UseCase, 'id'>;
+export type CreateUseCaseDto = Omit<UseCase, 'id'>;
 
 

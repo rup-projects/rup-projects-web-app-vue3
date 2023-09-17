@@ -1,4 +1,4 @@
-import {UseCase} from "../models/use-case";
+import {CreateUseCaseDto, UseCase} from "../models/use-case";
 import {api} from "./api";
 import {Member} from "../models/member";
 import {Phase} from "../models/phase.ts";
@@ -13,7 +13,7 @@ export async function getUserCase(id: string): Promise<UseCase[]> {
     return api.get(`use-cases/${id}`)
 }
 
-export async function createUseCase(useCase: UseCase): Promise<UseCase> {
+export async function createUseCase(useCase: CreateUseCaseDto): Promise<UseCase> {
     return api.post(`use-cases`, useCase);
 }
 
@@ -31,7 +31,7 @@ export async function getMember(id: string): Promise<UseCase[]> {
 }
 
 export async function updateMember(member: Member): Promise<void> {
-    return api.put(`members${member.id}`, member);
+    return api.put(`members/${member.id}`, member);
 }
 
 export async function createMember(member: Member): Promise<Member> {
